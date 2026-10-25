@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hukum Kekekalan Daya pada Rangkaian AC</title>
+<style>
+:root{--bg:#eaf0f6;--ink:#16263a;--mut:#5a6b80;--line:#d3dce7;--v:#2563eb;--i:#e8590c;--p:#12935a;--q:#8b3fc4;--acc:#0b4f8f}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#102a43;color:#fff;padding:14px 20px}
+.brand{display:flex;gap:12px;align-items:center;max-width:1280px;margin:auto}
+h1{margin:0;font-size:1.3rem;font-weight:650}
+header p{margin:0;color:#b9cde2;font-size:.88rem}
+h2{font-size:1.05rem;margin:0 0 8px}
+h3{font-size:.95rem;margin:12px 0 4px}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav div{display:flex;gap:2px;max-width:1280px;margin:auto;overflow-x:auto;padding:0 12px}
+nav button{border:0;background:none;padding:12px 16px;font:inherit;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--acc);border-color:var(--acc);font-weight:600}
+.layout{display:grid;grid-template-columns:310px 1fr;gap:16px;padding:16px;max-width:1280px;margin:auto;align-items:start}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.card:last-child{margin-bottom:0}
+canvas{width:100%;display:block;background:#fff;border-radius:6px}
+.row{margin:10px 0}.row.off{opacity:.4}
+.row label{display:flex;justify-content:space-between;align-items:center;font-size:.88rem;gap:8px}
+.row input[type=number]{width:84px;padding:3px 6px;border:1px solid var(--line);border-radius:5px;font:inherit}
+input[type=range]{width:100%;accent-color:var(--acc)}
+select{width:100%;padding:7px;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff}
+.btns{display:flex;gap:8px;margin:10px 0}
+.btn{border:1px solid var(--acc);background:var(--acc);color:#fff;padding:7px 14px;border-radius:7px;font:inherit;cursor:pointer}
+.btn.alt{background:#fff;color:var(--acc)}
+.btn:active{transform:translateY(1px)}
+:focus-visible{outline:3px solid #f5b301;outline-offset:2px}
+.vals{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px}
+.val{border:1px solid var(--line);border-left:5px solid var(--c,#999);border-radius:6px;padding:5px 9px}
+.val b{display:block;font-size:1.12rem;font-variant-numeric:tabular-nums}
+.val span{font-size:.76rem;color:var(--mut)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:right}
+td:first-child,th:first-child{text-align:left}
+.ok{background:#e3f6ec;color:#0b6b40;border-radius:6px;padding:6px 10px;font-weight:600}
+.bad{background:#fde8e8;color:#9b1c1c;border-radius:6px;padding:6px 10px;font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+.tg{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:.9rem}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+section[hidden]{display:none}
+details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.f{font-family:Cambria,"Times New Roman",serif;background:#f2f6fb;padding:6px 10px;border-radius:6px;margin:6px 0;overflow-x:auto}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:16px;padding:5px 12px;font:inherit;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+.note{font-size:.84rem;color:var(--mut)}
+.q{margin-bottom:14px}.q label{display:block;padding:2px 0;cursor:pointer}
+.fb{font-size:.88rem;margin-top:4px}
+</style>
+</head>
+<body>
+<header><div class="brand">
+<svg width="44" height="30" viewBox="0 0 44 30" aria-hidden="true"><path d="M2 15 C8 -3 14 -3 22 15 S36 33 42 15" fill="none" stroke="#6fb1ff" stroke-width="3"/><path d="M2 15 H42" stroke="#fff" stroke-opacity=".4"/></svg>
+<div><h1>Hukum Kekekalan Daya pada Rangkaian AC</h1><p>Simulasi rangkaian R, RL, RC, dan RLC seri — keadaan tunak sinusoidal satu fasa</p></div></div></header>
+<nav><div role="tablist" id="tabs">
+<button role="tab" data-t="sim" aria-selected="true">Simulasi</button>
+<button role="tab" data-t="theory" aria-selected="false">Teori dan Rumus</button>
+<button role="tab" data-t="graph" aria-selected="false">Grafik dan Diagram Fasor</button>
+<button role="tab" data-t="exp" aria-selected="false">Eksperimen</button>
+<button role="tab" data-t="eval" aria-selected="false">Evaluasi</button></div></nav>
+
+<div class="layout">
+<aside class="card" id="side">
+<h2>Rangkaian dan parameter</h2>
+<label for="model" class="note">Model beban</label>
+<select id="model"><option value="R">R — resistif murni</option><option value="RL">RL — induktif</option><option value="RC">RC — kapasitif</option><option value="RLC" selected>RLC — seri</option></select>
+<div id="pars"></div>
+<div class="btns"><button class="btn" id="play">Pause</button><button class="btn alt" id="reset">Reset</button></div>
+<div class="row"><label for="speed">Kecepatan animasi <span id="spv">1×</span></label><input type="range" id="speed" min="0.25" max="3" step="0.25" value="1"></div>
+<p class="note">Animasi diperlambat agar terlihat (±0,4 siklus/detik). Sumbu waktu grafik tetap memakai waktu nyata (ms).</p>
+</aside>
+
+<main>
+<section id="sim">
+<div class="card"><h2>Rangkaian AC</h2><canvas id="cv-circuit" style="height:340px" aria-label="Animasi rangkaian AC"></canvas>
+<p class="note"><span class="sw" style="background:var(--i)"></span>Titik oranye = muatan yang bergerak bolak-balik; panah menunjukkan arah arus sesaat (positif = searah jarum jam). Komponen abu-abu putus-putus tidak dipakai pada model terpilih.</p></div>
+<div class="card"><h2>Hasil perhitungan (real-time)</h2><div class="vals" id="vals"></div><p id="ltype" class="note"></p></div>
+<div class="card"><h2>Indikator kekekalan daya</h2>
+<p class="note">ε(t) = p<sub>sumber</sub>(t) − [p<sub>R</sub>(t) + p<sub>L</sub>(t) + p<sub>C</sub>(t)], dihitung dari tegangan dan arus tiap komponen secara terpisah, pada sudut ωt saat ini.</p>
+<div id="inst"></div><div id="stat" style="margin:8px 0"></div>
+<h3>Bukti selama satu periode (integrasi numerik 2000 titik)</h3><div id="avg"></div>
+<h3>Daya kompleks: kekal per komponen, tetapi |S| tidak dijumlah aljabar</h3><div id="cplx"></div></div>
+</section>
+
+<section id="theory" hidden>
+<div class="card"><h2>Teori dan rumus</h2>
+<details open><summary>1. Arus bolak-balik (AC)</summary><p>Arus AC berubah besar dan arahnya secara periodik. Bentuk yang paling umum adalah sinusoidal: v(t) = √2·V<sub>rms</sub>·sin(ωt), dengan ω = 2πf dan periode T = 1/f. Jaringan PLN di Indonesia memakai f = 50 Hz.</p></details>
+<details><summary>2. Nilai RMS</summary><p>Nilai RMS (efektif) adalah nilai DC yang menghasilkan panas sama pada sebuah resistor.</p><div class="f">V<sub>rms</sub> = √[(1/T)∫₀ᵀ v(t)² dt] = V<sub>puncak</sub>/√2 ≈ 0,707·V<sub>puncak</sub></div></details>
+<details><summary>3. Daya aktif, reaktif, dan semu</summary><div class="f">P = V·I·cos φ [W] &nbsp; Q = V·I·sin φ [var] &nbsp; S = V·I [VA]</div><p>P adalah daya rata-rata yang benar-benar diubah menjadi kerja atau panas. Q adalah ukuran energi yang bolak-balik antara sumber dan medan L/C (Q &gt; 0 induktif, Q &lt; 0 kapasitif). S adalah beban total yang harus disediakan sumber dan kabel. Hubungannya: <b>S² = P² + Q²</b> (segitiga daya).</p></details>
+<details><summary>4. Faktor daya</summary><div class="f">PF = P/S = cos φ</div><p>PF rendah berarti arus besar hanya untuk membawa energi reaktif. Untuk P yang sama, arus bertambah ∝ 1/PF dan rugi kabel I²R ikut naik, sehingga industri memasang kapasitor koreksi PF.</p></details>
+<details><summary>5. Hubungan fase tegangan dan arus</summary><p>Resistor: φ = 0° (sefase). Induktor: arus tertinggal 90° dari tegangan. Kapasitor: arus mendahului 90°. Rangkaian campuran: φ = atan2(X<sub>L</sub> − X<sub>C</sub>, R). Pengingat: <i>ELI the ICE man</i> — pada L (induktif) E mendahului I, pada C (kapasitif) I mendahului E.</p></details>
+<details><summary>6. Peran R, L, dan C</summary><div class="f">v<sub>R</sub> = R·i &nbsp; v<sub>L</sub> = L·di/dt &nbsp; i = C·dv<sub>C</sub>/dt<br>X<sub>L</sub> = 2πfL &nbsp; X<sub>C</sub> = 1/(2πfC)<br>Z = R + j(X<sub>L</sub> − X<sub>C</sub>), |Z| = √[R² + (X<sub>L</sub> − X<sub>C</sub>)²], I<sub>rms</sub> = V<sub>rms</sub>/|Z|</div><p>R mengubah energi listrik menjadi panas. L menyimpan energi di medan magnet, C di medan listrik.</p></details>
+<details><summary>7. Hukum kekekalan daya</summary><p>Pada rangkaian ideal, daya sesaat yang dikirim sumber selalu sama dengan jumlah daya sesaat yang diserap semua elemen (konsekuensi KVL dan KCL, teorema Tellegen): <b>p<sub>sumber</sub>(t) = p<sub>R</sub>(t) + p<sub>L</sub>(t) + p<sub>C</sub>(t)</b> pada setiap saat. Akibatnya P total sumber = ΣP komponen (hanya R yang punya P rata-rata ≠ 0), dan Q sumber = Q<sub>L</sub> + Q<sub>C</sub> (daya kompleks kekal).</p>
+<p><b>Peringatan:</b> P dan Q dapat dijumlahkan karena keduanya adalah bagian riil dan imajiner dari daya kompleks. Besaran S = |P + jQ| <u>tidak</u> dijumlahkan aljabar: S ≠ P + Q, melainkan S² = P² + Q². Kekekalan daya sesaat (untuk setiap t) juga berbeda dengan hubungan segitiga daya (untuk nilai rata-rata/efektif).</p></details>
+<details><summary>8. Pertukaran energi pada elemen reaktif</summary><div class="f">W<sub>L</sub> = ½·L·i² &nbsp; W<sub>C</sub> = ½·C·v<sub>C</sub>²</div><p>Daya sesaat induktor ideal p<sub>L</sub> = v<sub>L</sub>·i = d(W<sub>L</sub>)/dt berosilasi pada frekuensi 2f dengan rata-rata nol; kapasitor ideal sama. Saat p &gt; 0 elemen menyimpan energi, saat p &lt; 0 energi dikembalikan ke sumber, jadi tidak ada energi yang hilang. Pada resonansi seri, X<sub>L</sub> = X<sub>C</sub> dan energi bertukar langsung antara L dan C sehingga sumber hanya menyuplai rugi di R.</p></details>
+</div></section>
+
+<section id="graph" hidden>
+<div class="card"><h2>Gelombang v(t), i(t), p(t)</h2>
+<div class="tg"><label>Jumlah periode <select id="nper" style="width:auto"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+<label><input type="checkbox" data-s="v" checked><span class="sw" style="background:var(--v)"></span>v(t)</label>
+<label><input type="checkbox" data-s="i" checked><span class="sw" style="background:var(--i)"></span>i(t)</label>
+<label><input type="checkbox" data-s="p" checked><span class="sw" style="background:var(--p)"></span>p(t)</label></div>
+<canvas id="cv-wave" style="height:400px;margin-top:8px"></canvas>
+<p class="note">v dan i digambar ternormalisasi terhadap amplitudonya masing-masing (nilai puncak tertera). Pada p(t): hijau = sumber mengirim energi, merah = energi kembali ke sumber. Garis putus-putus = daya rata-rata P. Ubah parameter di panel kiri.</p></div>
+<div class="two"><div class="card"><h2>Diagram fasor</h2><canvas id="cv-ph" style="height:300px"></canvas></div>
+<div class="card"><h2>Segitiga daya</h2><canvas id="cv-tri" style="height:300px"></canvas></div></div>
+</section>
+
+<section id="exp" hidden><div class="card">
+<div class="seg" id="exps"></div>
+<h2 id="e-title"></h2><p id="e-goal"></p><h3>Langkah</h3><ol id="e-steps"></ol>
+<h3>Prediksi Anda</h3><p id="e-q"></p><div class="seg" id="e-opt"></div><p id="e-fb" class="fb"></p>
+<h3>Percobaan</h3>
+<div class="row"><label for="e-range"><span id="e-lab"></span><b id="e-val"></b></label><input type="range" id="e-range"></div>
+<canvas id="cv-sweep" style="height:190px"></canvas>
+<h3>Hasil pengamatan</h3><div id="e-obs"></div>
+<h3>Kesimpulan otomatis</h3><p id="e-conc"></p>
+<div class="btns"><button class="btn alt" id="e-reset">Kembalikan nilai awal</button></div>
+</div></section>
+
+<section id="eval" hidden><div class="card"><h2>Evaluasi</h2><div id="quiz"></div>
+<div class="btns"><button class="btn" id="qcheck">Periksa jawaban</button><button class="btn alt" id="qreset">Ulangi</button></div><p id="qscore"></p></div></section>
+</main></div>
+
+<script>
+"use strict";
+const PI=Math.PI,$=s=>document.querySelector(s);
+const f=(v,d=2)=>isFinite(v)?v.toFixed(d).replace('.',','):'–';
+const fs=(v,d=2)=>(v<0?'−':'+')+f(Math.abs(v),d);
+const fe=v=>v===0?'0':v.toExponential(2).replace('.',',');
+const DEF={V:120,f:50,R:50,L:0.2,C:50};
+const MODELS={R:[0,0],RL:[1,0],RC:[0,1],RLC:[1,1]};
+const PAR=[{k:'V',n:'Tegangan sumber V<sub>rms</sub>',u:'V',min:0,max:240,st:1},{k:'f',n:'Frekuensi f',u:'Hz',min:10,max:100,st:0.1},{k:'R',n:'Resistansi R',u:'Ω',min:1,max:500,st:1},{k:'L',n:'Induktansi L',u:'H',min:0,max:2,st:0.01},{k:'C',n:'Kapasitansi C',u:'µF',min:1,max:1000,st:1}];
+let S={model:'RLC',...DEF},K,ph=0,speed=1,N=2,show={v:1,i:1,p:1};
+let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Model fisika ---------- */
+function calc(p){
+ const [hL,hC]=MODELS[p.model],w=2*PI*p.f;
+ const XL=hL?w*p.L:0,XC=hC?1/(w*p.C*1e-6):0,X=XL-XC,Z=Math.hypot(p.R,X);
+ const I=p.V/Z,phi=Math.atan2(X,p.R),P=p.V*I*Math.cos(phi),Q=p.V*I*Math.sin(phi);
+ return{hL,hC,w,R:p.R,L:p.L,C:p.C,V:p.V,f:p.f,XL,XC,X,Z,I,phi,P,Q,S:p.V*I,pf:Math.cos(phi),
+  Vpk:Math.SQRT2*p.V,Ipk:Math.SQRT2*I,WL:hL?p.L*I*I:0,WC:hC?p.C*1e-6*(XC*I)**2:0,f0:1/(2*PI*Math.sqrt(p.L*p.C*1e-6))};
+}
+function inst(k,t0){
+ const th=t0-k.phi,v=k.Vpk*Math.sin(t0),i=k.Ipk*Math.sin(th);
+ const vR=k.R*i,vL=k.hL?k.Ipk*k.XL*Math.cos(th):0,vC=k.hC?-k.Ipk*k.XC*Math.cos(th):0;
+ const pS=v*i,pR=vR*i,pL=vL*i,pC=vC*i;
+ return{v,i,vR,vL,vC,pS,pR,pL,pC,eps:pS-(pR+pL+pC)};
+}
+let AV;
+function integ(){
+ const n=2000;let a={pS:0,pR:0,pL:0,pC:0,me:0};
+ for(let j=0;j<n;j++){const r=inst(K,2*PI*j/n);a.pS+=r.pS;a.pR+=r.pR;a.pL+=r.pL;a.pC+=r.pC;a.me=Math.max(a.me,Math.abs(r.eps));}
+ for(const x of['pS','pR','pL','pC'])a[x]/=n;AV=a;
+}
+
+/* ---------- Antarmuka: kontrol ---------- */
+const pars=$('#pars');
+PAR.forEach(p=>{const d=document.createElement('div');d.className='row';d.id='row-'+p.k;
+ d.innerHTML=`<label for="n-${p.k}">${p.n} (${p.u})<input type="number" id="n-${p.k}" data-k="${p.k}" min="${p.min}" max="${p.max}" step="${p.st}"></label><input type="range" data-k="${p.k}" min="${p.min}" max="${p.max}" step="${p.st}" aria-label="${p.n}">`;pars.appendChild(d);});
+function sync(skip){
+ document.querySelectorAll('[data-k]').forEach(el=>{if(el===skip||(el.type==='number'&&el===document.activeElement))return;el.value=S[el.dataset.k];});
+ $('#model').value=S.model;const m=MODELS[S.model];
+ $('#row-L').classList.toggle('off',!m[0]);$('#row-C').classList.toggle('off',!m[1]);
+ $('#e-val').textContent=EX&&' '+f(S[EX.key],EX.key==='L'?2:1)+' '+PAR.find(p=>p.k===EX.key).u;
+}
+document.addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.k;if(!k)return;let v=parseFloat(t.value);if(isNaN(v))return;
+ const p=PAR.find(x=>x.k===k);S[k]=Math.min(p.max,Math.max(p.min,v));sync(t);recalc();});
+document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.k)sync();});
+$('#model').onchange=e=>{S.model=e.target.value;sync();recalc();};
+$('#play').onclick=()=>{playing=!playing;$('#play').textContent=playing?'Pause':'Play';};
+$('#reset').onclick=()=>{S={model:'RLC',...DEF};ph=0;speed=1;$('#speed').value=1;$('#spv').textContent='1×';playing=true;$('#play').textContent='Pause';sync();recalc();};
+$('#speed').oninput=e=>{speed=+e.target.value;$('#spv').textContent=speed+'×';};
+$('#play').textContent=playing?'Pause':'Play';
+$('#nper').onchange=e=>N=+e.target.value;
+document.querySelectorAll('[data-s]').forEach(c=>c.onchange=()=>show[c.dataset.s]=c.checked?1:0);
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!==b.dataset.t);
+ $('#side').style.display=b.dataset.t==='theory'||b.dataset.t==='eval'?'none':'';
+ document.querySelector('.layout').style.gridTemplateColumns=getComputedStyle($('#side')).display==='none'?'1fr':'';
+ recalc();});
+
+/* ---------- Kartu hasil ---------- */
+const CARDS=[['Vrms','V','var(--v)',k=>f(k.V,1)],['Irms','A','var(--i)',k=>f(k.I,3)],['|Z|','Ω','#51627a',k=>f(k.Z)],['Sudut fase φ','°','#51627a',k=>fs(k.phi*180/PI,1)],
+['Daya aktif P','W','var(--p)',k=>f(k.P)],['Daya reaktif Q','var','var(--q)',k=>fs(k.Q)],['Daya semu S','VA','var(--acc)',k=>f(k.S)],['Faktor daya','','#51627a',k=>f(k.pf,3)],
+['Frekuensi f','Hz','#51627a',k=>f(k.f,1)],['X_L','Ω','#51627a',k=>f(k.XL)],['X_C','Ω','#51627a',k=>f(k.XC)],['W_L maks','mJ','#51627a',k=>f(k.WL*1000,2)],['W_C maks','mJ','#51627a',k=>f(k.WC*1000,2)]];
+$('#vals').innerHTML=CARDS.map((c,j)=>`<div class="val" style="--c:${c[2]}"><span>${c[0]}</span><b id="cd${j}"></b><span>${c[1]}</span></div>`).join('');
+
+function recalc(){
+ K=calc(S);integ();
+ CARDS.forEach((c,j)=>$('#cd'+j).textContent=c[3](K));
+ const d=K.phi*180/PI;
+ $('#ltype').textContent=Math.abs(d)<0.05?'Beban resistif: arus sefase dengan tegangan (PF = 1).':d>0?`Beban induktif: arus tertinggal ${f(d,1)}° dari tegangan (PF lagging, Q positif).`:`Beban kapasitif: arus mendahului ${f(-d,1)}° dari tegangan (PF leading, Q negatif).`;
+ const tol=1e-9*Math.max(1,K.S);
+ $('#avg').innerHTML=`<table><tr><th></th><th>Rata-rata p(t) numerik (W)</th><th>Rumus (W)</th></tr>
+ <tr><td>Sumber ⟨p⟩</td><td>${f(AV.pS,4)}</td><td>P = ${f(K.P,4)}</td></tr>
+ <tr><td>Resistor ⟨p<sub>R</sub>⟩</td><td>${f(AV.pR,4)}</td><td>I²R = ${f(K.I*K.I*K.R,4)}</td></tr>
+ <tr><td>Induktor ⟨p<sub>L</sub>⟩</td><td>${fe(AV.pL)}</td><td>0</td></tr>
+ <tr><td>Kapasitor ⟨p<sub>C</sub>⟩</td><td>${fe(AV.pC)}</td><td>0</td></tr>
+ <tr><td>maks |ε(t)| satu periode</td><td>${fe(AV.me)}</td><td>toleransi ${fe(tol)}</td></tr></table>`;
+ const QL=K.hL?K.XL*K.I*K.I:0,QC=K.hC?-K.XC*K.I*K.I:0,PR=K.I*K.I*K.R;
+ $('#cplx').innerHTML=`<table><tr><th></th><th>P (W)</th><th>Q (var)</th><th>S=|P+jQ| (VA)</th></tr>
+ <tr><td>Resistor</td><td>${f(PR)}</td><td>0,00</td><td>${f(PR)}</td></tr>
+ <tr><td>Induktor</td><td>0,00</td><td>${fs(QL)}</td><td>${f(Math.abs(QL))}</td></tr>
+ <tr><td>Kapasitor</td><td>0,00</td><td>${fs(QC)}</td><td>${f(Math.abs(QC))}</td></tr>
+ <tr><td><b>Σ komponen</b></td><td>${f(PR)}</td><td>${fs(QL+QC)}</td><td><b>${f(Math.hypot(PR,QL+QC))}</b></td></tr>
+ <tr><td><b>Sumber</b></td><td>${f(K.P)}</td><td>${fs(K.Q)}</td><td><b>${f(K.S)}</b></td></tr>
+ <tr><td>Σ|S| komponen (salah)</td><td></td><td></td><td>${f(PR+Math.abs(QL)+Math.abs(QC))}</td></tr></table>
+ <p class="note">P dan Q sumber sama dengan jumlah P dan Q komponen. Kolom S: S² = ${f(K.S**2,1)} = P² + Q² = ${f(K.P**2+K.Q**2,1)}; menjumlahkan |S| tiap komponen memberi nilai lain.</p>`;
+ drawExp();
+}
+function live(){
+ const r=inst(K,ph),tol=1e-9*Math.max(1,K.S);
+ $('#inst').innerHTML=`<table><tr><th>ωt = ${f((ph%(2*PI))*180/PI,0)}°</th><th>v (V)</th><th>i (A)</th><th>p (W)</th></tr>
+ <tr><td>Sumber</td><td>${fs(r.v)}</td><td>${fs(r.i,3)}</td><td><b>${fs(r.pS)}</b></td></tr>
+ <tr><td>Resistor</td><td>${fs(r.vR)}</td><td>${fs(r.i,3)}</td><td>${fs(r.pR)}</td></tr>
+ <tr><td>Induktor</td><td>${fs(r.vL)}</td><td>${fs(r.i,3)}</td><td>${fs(r.pL)}</td></tr>
+ <tr><td>Kapasitor</td><td>${fs(r.vC)}</td><td>${fs(r.i,3)}</td><td>${fs(r.pC)}</td></tr>
+ <tr><td><b>Σ komponen</b></td><td></td><td></td><td><b>${fs(r.pR+r.pL+r.pC)}</b></td></tr>
+ <tr><td><b>ε(t)</b></td><td></td><td></td><td><b>${fe(r.eps)}</b></td></tr></table>`;
+ const ok=Math.abs(r.eps)<tol&&AV.me<tol;
+ $('#stat').innerHTML=ok?`<div class="ok">Keseimbangan daya terpenuhi: |ε| &lt; ${fe(tol)} W</div>`:`<div class="bad">Residual melebihi toleransi ${fe(tol)} W</div>`;
+}
+
+/* ---------- Gambar ---------- */
+function cv(id){const c=document.getElementById(id),r=c.getBoundingClientRect(),d=devicePixelRatio||1,W=Math.round(r.width*d),H=Math.round(r.height*d);
+ if(c.width!==W||c.height!==H){c.width=W;c.height=H;}const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,r.width,r.height);return{x,w:r.width,h:r.height};}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function txt(x,s,px,py,col='#16263a',al='left',font='13px "Segoe UI",system-ui,sans-serif'){x.fillStyle=col;x.textAlign=al;x.font=font;x.fillText(s,px,py);}
+
+function drawCircuit(){
+ const{x,w,h}=cv('cv-circuit'),r=inst(K,ph);
+ const m=Math.max(75,Math.min(w*.14,120)),x0=m,x1=w-m,y0=64,y1=h-64,mx=(x0+x1)/2,my=(y0+y1)/2,W=x1-x0,H=y1-y0,Lp=2*W+2*H;
+ x.lineWidth=4;x.strokeStyle='#8a9bb0';x.lineJoin='round';x.strokeRect(x0,y0,W,H);
+ const A=8+34*K.Ipk/(K.Ipk+1.5),disp=-Math.cos(ph-K.phi)*A,n=Math.floor(Lp/30);
+ const pos=s=>{if(s<W)return[x0+s,y0];s-=W;if(s<H)return[x1,y0+s];s-=H;if(s<W)return[x1-s,y1];s-=W;return[x0,y1-s];};
+ x.fillStyle=css('--i');
+ for(let j=0;j<n;j++){const p=pos((((j*Lp/n+disp)%Lp)+Lp)%Lp);x.beginPath();x.arc(p[0],p[1],3.6,0,2*PI);x.fill();}
+ const comp=(kind,cx,cy,vert,on,lab,sub,lp,sp)=>{
+  x.save();x.translate(cx,cy);if(vert)x.rotate(PI/2);
+  if(on){x.fillStyle='#fff';x.fillRect(-55,-20,110,40);x.strokeStyle='#16263a';x.lineWidth=2.5;x.beginPath();
+   if(kind==='R'){x.moveTo(-50,0);x.lineTo(-38,0);for(let j=0;j<6;j++)x.lineTo(-38+j*12+6,j%2?10:-10);x.lineTo(34,0);x.lineTo(50,0);}
+   else if(kind==='L'){x.moveTo(-50,0);x.lineTo(-36,0);for(let j=0;j<4;j++)x.arc(-27+j*18,0,9,PI,0);x.lineTo(50,0);}
+   else{x.moveTo(-50,0);x.lineTo(-6,0);x.moveTo(-6,-16);x.lineTo(-6,16);x.moveTo(6,-16);x.lineTo(6,16);x.moveTo(6,0);x.lineTo(50,0);}
+   x.stroke();}
+  else{x.setLineDash([4,4]);x.strokeStyle='#aab6c4';x.lineWidth=1.5;x.strokeRect(-30,-12,60,24);x.setLineDash([]);}
+  x.restore();
+  txt(x,on?lab:kind+' (tidak dipakai)',lp[0],lp[1],on?'#16263a':'#8794a5',lp[2]);
+  if(on)txt(x,sub,sp[0],sp[1],'#5a6b80',sp[2]);};
+ comp('R',mx,y0,0,1,`R = ${S.R} Ω`,`v_R = ${fs(r.vR,1)} V`,[mx,y0-30,'center'],[mx,y0+32,'center']);
+ comp('L',x1,my,1,K.hL,`L = ${S.L} H`,`v_L = ${fs(r.vL,1)} V`,[x1-34,my-4,'right'],[x1-34,my+14,'right']);
+ comp('C',mx,y1,0,K.hC,`C = ${S.C} µF`,`v_C = ${fs(r.vC,1)} V`,[mx,y1+34,'center'],[mx,y1-30,'center']);
+ x.fillStyle='#fff';x.strokeStyle='#16263a';x.lineWidth=2.5;x.beginPath();x.arc(x0,my,28,0,2*PI);x.fill();x.stroke();
+ x.beginPath();for(let j=-18;j<=18;j++){const px=x0+j,py=my-10*Math.sin(j/18*PI);j===-18?x.moveTo(px,py):x.lineTo(px,py);}x.strokeStyle=css('--v');x.lineWidth=2.5;x.stroke();
+ txt(x,r.v>=0?'+':'−',x0-18,my-36,'#16263a','center','bold 20px sans-serif');txt(x,r.v>=0?'−':'+',x0-18,my+50,'#16263a','center','bold 20px sans-serif');
+ txt(x,`v = ${fs(r.v,1)} V`,x0+36,my-4,css('--v'));txt(x,`Vrms = ${f(S.V,0)} V, ${f(S.f,1)} Hz`,x0+36,my+14,'#5a6b80');
+ const ax=x0+(mx-55-x0)/2;if(ax-x0>40){x.strokeStyle=css('--i');x.lineWidth=3;const d=r.i>=0?1:-1;x.beginPath();x.moveTo(ax-10*d,y0-9);x.lineTo(ax+10*d,y0);x.lineTo(ax-10*d,y0+9);x.stroke();txt(x,`i = ${fs(r.i,2)} A`,ax,y0-16,css('--i'),'center');}
+ txt(x,`ωt = ${f((ph%(2*PI))*180/PI,0)}°`,w-12,20,'#5a6b80','right');
+}
+
+function drawWave(){
+ const{x,w,h}=cv('cv-wave'),ml=58,mr=12,pw=w-ml-mr,T=1/K.f,win=N*T,n=360;
+ const h1=h*.52,t1=12,t2=h1+30,h2=h-t2-30;
+ const X=t=>ml+t/win*pw;
+ const panel=(top,ht)=>{x.strokeStyle='#d3dce7';x.lineWidth=1;x.strokeRect(ml,top,pw,ht);x.beginPath();x.moveTo(ml,top+ht/2);x.lineTo(ml+pw,top+ht/2);x.stroke();};
+ panel(t1,h1-t1);panel(t2,h2);
+ x.strokeStyle='#e5ebf2';for(let j=0;j<=N*2;j++){const px=X(j*T/2);[[t1,h1-t1],[t2,h2]].forEach(a=>{x.beginPath();x.moveTo(px,a[0]);x.lineTo(px,a[0]+a[1]);x.stroke();});
+  if(j%2===0||N<=2)txt(x,f(j*T/2*1000,1),px,t2+h2+14,'#5a6b80','center','11px sans-serif');}
+ txt(x,'t (ms)',ml+pw,t2+h2+27,'#5a6b80','right','11px sans-serif');
+ const curve=(fn,top,ht,sc,col,fill)=>{const y0=top+ht/2,Y=v=>y0-v/sc*(ht/2-6);x.beginPath();
+  for(let j=0;j<=n;j++){const t=j/n*win,px=X(t),py=Y(fn(t));j?x.lineTo(px,py):x.moveTo(px,py);}x.strokeStyle=col;x.lineWidth=2.3;x.stroke();
+  if(fill){const pth=new Path2D();pth.moveTo(ml,y0);for(let j=0;j<=n;j++){const t=j/n*win;pth.lineTo(X(t),Y(fn(t)));}pth.lineTo(ml+pw,y0);pth.closePath();
+   x.save();x.beginPath();x.rect(ml,top,pw,ht/2);x.clip();x.fillStyle='rgba(18,147,90,.22)';x.fill(pth);x.restore();
+   x.save();x.beginPath();x.rect(ml,y0,pw,ht/2);x.clip();x.fillStyle='rgba(214,60,60,.22)';x.fill(pth);x.restore();}
+  const tc=(ph%(2*PI*N))/K.w;x.fillStyle=col;x.beginPath();x.arc(X(tc),Y(fn(tc)),5,0,2*PI);x.fill();return Y;};
+ const v=t=>K.Vpk*Math.sin(K.w*t),i=t=>K.Ipk*Math.sin(K.w*t-K.phi),p=t=>v(t)*i(t);
+ if(show.v&&K.Vpk>0)curve(v,t1,h1-t1,K.Vpk,css('--v'));
+ if(show.i&&K.Ipk>0)curve(i,t1,h1-t1,K.Ipk,css('--i'));
+ txt(x,`v: ±${f(K.Vpk,1)} V`,6,t1+16,css('--v'),'left','11px sans-serif');txt(x,`i: ±${f(K.Ipk,2)} A`,6,t1+30,css('--i'),'left','11px sans-serif');
+ const pm=K.S+Math.abs(K.P)||1;
+ if(show.p){const Y=curve(p,t2,h2,pm,css('--p'),1);x.setLineDash([6,4]);x.strokeStyle='#16263a';x.lineWidth=1.5;x.beginPath();x.moveTo(ml,Y(K.P));x.lineTo(ml+pw,Y(K.P));x.stroke();x.setLineDash([]);
+  txt(x,`P = ${f(K.P,1)} W`,ml+pw-4,Y(K.P)-5,'#16263a','right','11px sans-serif');}
+ txt(x,`p: ±${f(pm,0)} W`,6,t2+16,css('--p'),'left','11px sans-serif');
+ const tc=(ph%(2*PI*N))/K.w;x.strokeStyle='rgba(22,38,58,.5)';x.lineWidth=1;x.beginPath();x.moveTo(X(tc),t1);x.lineTo(X(tc),t2+h2);x.stroke();
+ txt(x,`φ = ${fs(K.phi*180/PI,1)}° → selisih waktu Δt = ${f(K.phi/K.w*1000,2)} ms (i terhadap v)`,ml+4,t2-6,'#5a6b80','left','11px sans-serif');
+}
+
+function arrow(x,x0,y0,x1,y1,col,wd=3){const a=Math.atan2(y1-y0,x1-x0);x.strokeStyle=col;x.fillStyle=col;x.lineWidth=wd;x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();
+ x.beginPath();x.moveTo(x1,y1);x.lineTo(x1-10*Math.cos(a-.4),y1-10*Math.sin(a-.4));x.lineTo(x1-10*Math.cos(a+.4),y1-10*Math.sin(a+.4));x.fill();}
+function drawPhasor(){
+ const{x,w,h}=cv('cv-ph'),cx=w/2,cy=h/2,R=Math.min(w,h)/2-30,th=ph%(2*PI);
+ x.strokeStyle='#d3dce7';x.lineWidth=1;x.beginPath();x.arc(cx,cy,R,0,2*PI);x.moveTo(cx-R-10,cy);x.lineTo(cx+R+10,cy);x.moveTo(cx,cy-R-10);x.lineTo(cx,cy+R+10);x.stroke();
+ const aV=-th,aI=-(th-K.phi),Lv=R*.95,Li=R*.7;
+ const ep=(a,L)=>[cx+L*Math.cos(a),cy+L*Math.sin(a)];
+ if(K.V>0){const[a,b]=ep(aV,Lv);x.setLineDash([3,4]);x.strokeStyle=css('--v');x.beginPath();x.moveTo(a,b);x.lineTo(cx,b);x.stroke();x.setLineDash([]);arrow(x,cx,cy,a,b,css('--v'));
+  const[c,d]=ep(aI,Li);x.setLineDash([3,4]);x.strokeStyle=css('--i');x.beginPath();x.moveTo(c,d);x.lineTo(cx,d);x.stroke();x.setLineDash([]);arrow(x,cx,cy,c,d,css('--i'));
+  x.strokeStyle='#16263a';x.lineWidth=1.5;x.beginPath();x.arc(cx,cy,R*.3,aV<aI?aV:aI,aV<aI?aI:aV);x.stroke();
+  const mid=(aV+aI)/2,[lx,ly]=ep(mid,R*.3+16);txt(x,'φ',lx,ly+4,'#16263a','center','bold 14px serif');
+  txt(x,`V = ${f(K.V,1)} V∠0°`,10,18,css('--v'),'left','bold 13px sans-serif');txt(x,`I = ${f(K.I,2)} A∠${f(-K.phi*180/PI,1)}°`,10,36,css('--i'),'left','bold 13px sans-serif');}
+ txt(x,`|Z| = ${f(K.Z,1)} Ω ∠${f(K.phi*180/PI,1)}°  (V = Z·I)`,10,h-8,'#5a6b80');
+ txt(x,'Fasor berputar berlawanan arah jarum jam; proyeksi vertikal = nilai sesaat. Panjang V dan I berskala berbeda.',10,h-24,'#8794a5','left','10px sans-serif');
+}
+function drawTri(){
+ const{x,w,h}=cv('cv-tri'),ox=44,oy=h/2,P=K.P,Q=K.Q;
+ let sc=1;if(P>0||Math.abs(Q)>0)sc=Math.min((w-ox-70)/Math.max(P,1e-9),(h/2-36)/Math.max(Math.abs(Q),1e-9));
+ x.strokeStyle='#c4cfdc';x.lineWidth=1;x.beginPath();x.moveTo(ox-14,oy);x.lineTo(w-8,oy);x.moveTo(ox,8);x.lineTo(ox,h-8);x.stroke();
+ txt(x,'P (W)',w-8,oy-6,'#5a6b80','right','11px sans-serif');txt(x,'Q (var)',ox+6,16,'#5a6b80','left','11px sans-serif');
+ const ex=ox+P*sc,ey=oy-Q*sc;
+ arrow(x,ox,oy,ex,oy,css('--p'),4);arrow(x,ex,oy,ex,ey,css('--q'),4);arrow(x,ox,oy,ex,ey,css('--acc'),4);
+ txt(x,`P = ${f(P,1)} W`,(ox+ex)/2,oy+(Q>=0?18:-8),css('--p'),'center','bold 13px sans-serif');
+ txt(x,`Q = ${fs(Q,1)} var`,ex+6,(oy+ey)/2,css('--q'),'left','bold 13px sans-serif');
+ txt(x,`S = ${f(K.S,1)} VA`,(ox+ex)/2-4,(oy+ey)/2+(Q>=0?-10:18),css('--acc'),'right','bold 13px sans-serif');
+ x.strokeStyle='#16263a';x.lineWidth=1.5;x.beginPath();x.arc(ox,oy,28,Q>=0?-K.phi:0,Q>=0?0:-K.phi);x.stroke();
+ txt(x,`φ = ${fs(K.phi*180/PI,1)}°`,ox+34,oy+(Q>=0?-6:16),'#16263a');
+ txt(x,`PF = ${f(K.pf,3)} (${Q>0.005?'lagging':Q<-0.005?'leading':'unity'})`,8,h-8,'#5a6b80');
+}
+
+/* ---------- Eksperimen ---------- */
+const trendOf=(fn,a,b)=>{const n=80,ys=[];for(let j=0;j<=n;j++)ys.push(fn(a+(b-a)*j/n));const mx=Math.max(...ys),mn=Math.min(...ys),rg=mx-mn;
+ if(rg<1e-9)return'tetap';const im=ys.indexOf(mx),iv=ys.indexOf(mn);
+ if(im>2&&im<n-2&&mx-Math.max(ys[0],ys[n])>.02*rg)return'puncak';if(iv>2&&iv<n-2&&Math.min(ys[0],ys[n])-mn>.02*rg)return'lembah';return ys[n]>ys[0]?'naik':'turun';};
+const EXPS=[
+{t:'Eksperimen 1 — Pengaruh resistansi',key:'R',setup:{model:'RL',V:120,f:50,R:20,L:0.2},met:c=>c.I,ml:'Irms (A)',
+ goal:'Mengamati bagaimana R memengaruhi arus, impedansi, daya aktif, dan faktor daya pada beban RL.',
+ steps:['Perhatikan model RL (V = 120 V, f = 50 Hz, L = 0,2 H).','Geser R dari kecil ke besar.','Catat perubahan Irms, |Z|, P, dan PF pada tabel.','Cari nilai R yang membuat P paling besar.'],
+ q:'Jika R dinaikkan dari 1 Ω ke 500 Ω, bagaimana Irms?',
+ conc:c=>`Pada R = ${f(c.R,0)} Ω: |Z| = ${f(c.Z)} Ω, Irms = ${f(c.I,3)} A, P = ${f(c.P)} W, PF = ${f(c.pf,3)}. R yang lebih besar menaikkan |Z| sehingga arus turun, tetapi φ = atan(X_L/R) mengecil (kini ${f(c.phi*180/PI,1)}°) sehingga PF naik menuju 1. Daya P = I²R mencapai maksimum ketika R = X_L (${f(c.XL)} Ω)${Math.abs(c.R-c.XL)<.06*c.XL?' — Anda berada di sekitar titik itu.':'.'}`},
+{t:'Eksperimen 2 — Pengaruh induktansi',key:'L',setup:{model:'RL',V:120,f:50,R:30,L:0.05},met:c=>c.phi*180/PI,ml:'φ (°)',
+ goal:'Mengamati X_L, sudut fase, dan Q ketika L diubah.',
+ steps:['Gunakan model RL (R = 30 Ω).','Geser L dari 0 ke 2 H.','Amati X_L = 2πfL, sudut φ, dan Q.','Lihat di tab Grafik bahwa i tertinggal dari v.'],
+ q:'Jika L dinaikkan dari 0 H ke 2 H, bagaimana sudut fase φ?',
+ conc:c=>`L = ${f(c.L,2)} H memberi X_L = ${f(c.XL)} Ω, φ = ${f(c.phi*180/PI,1)}°, Q = ${fs(c.Q)} var. Induktor menghasilkan tegangan v_L = L·di/dt: tegangan terbesar terjadi saat arus berubah paling cepat (melewati nol), sedangkan arus puncak datang kemudian. Karena itu arus tertinggal dari tegangan, mendekati 90° bila X_L ≫ R.`},
+{t:'Eksperimen 3 — Pengaruh kapasitansi',key:'C',setup:{model:'RC',V:120,f:50,R:30,C:50},met:c=>c.phi*180/PI,ml:'φ (°)',
+ goal:'Mengamati X_C dan sudut fase ketika C diubah pada beban RC.',
+ steps:['Gunakan model RC (R = 30 Ω, f = 50 Hz).','Geser C dari 1 µF ke 1000 µF.','Amati X_C = 1/(2πfC), φ, dan Q.','Lihat di tab Grafik bahwa i mendahului v.'],
+ q:'Jika C dinaikkan dari 1 µF ke 1000 µF, bagaimana φ (bertanda negatif untuk kapasitif)?',
+ conc:c=>`C = ${f(c.C,0)} µF memberi X_C = ${f(c.XC)} Ω, φ = ${f(c.phi*180/PI,1)}°, Q = ${fs(c.Q)} var (negatif = kapasitif). Pada kapasitor i = C·dv/dt: arus terbesar saat tegangan melewati nol (paling cepat berubah), sehingga arus mendahului tegangan. C yang makin besar membuat X_C makin kecil, sehingga |φ| mengecil menuju 0°.`},
+{t:'Eksperimen 4 — Resonansi RLC seri',key:'f',setup:{model:'RLC',V:120,f:30,R:20,L:0.5,C:20},met:c=>c.I,ml:'Irms (A)',
+ goal:'Menemukan frekuensi resonansi f₀ = 1/(2π√LC) dan mengamati perilaku rangkaian di sekitarnya.',
+ steps:['Gunakan RLC seri (R = 20 Ω, L = 0,5 H, C = 20 µF).','Geser f dari 10 Hz ke 100 Hz.','Cari f saat X_L = X_C, yaitu Irms maksimum.','Bandingkan Q dan φ di bawah, saat, dan di atas f₀.'],
+ q:'Jika f dinaikkan dari 10 Hz ke 100 Hz, bagaimana Irms?',
+ conc:c=>{const r=Math.abs(c.X)<.03*c.R+1e-9;return`f₀ = ${f(c.f0,2)} Hz; f sekarang = ${f(c.f,1)} Hz; X_L = ${f(c.XL)} Ω, X_C = ${f(c.XC)} Ω. `+(r?`Kondisi resonansi: X_L ≈ X_C sehingga |Z| ≈ R = ${f(c.R)} Ω, φ ≈ 0°, PF ≈ 1, Q ≈ 0, dan arus maksimum (${f(c.I,3)} A). Energi bertukar langsung antara L dan C; sumber hanya menyuplai rugi di R.`:c.X<0?`Di bawah resonansi rangkaian bersifat kapasitif (φ = ${f(c.phi*180/PI,1)}°, Q negatif).`:`Di atas resonansi rangkaian bersifat induktif (φ = ${f(c.phi*180/PI,1)}°, Q positif).`);}}];
+let EX=null,pred=null;
+function pickExp(j){EX=EXPS[j];pred=null;S={...S,...EX.setup};
+ const p=PAR.find(q=>q.k===EX.key),r=$('#e-range');r.min=p.min;r.max=p.max;r.step=p.st;r.dataset.k=EX.key;
+ $('#e-title').textContent=EX.t;$('#e-goal').textContent=EX.goal;$('#e-steps').innerHTML=EX.steps.map(s=>`<li>${s}</li>`).join('');
+ $('#e-lab').textContent=`Variabel: ${p.n.replace(/<[^>]+>/g,'')} (${p.u})`;$('#e-q').textContent=EX.q;$('#e-fb').textContent='';
+ $('#e-opt').innerHTML=['naik','turun','puncak','lembah'].map(o=>`<button data-o="${o}" aria-pressed="false">${{naik:'Naik terus',turun:'Turun terus',puncak:'Naik lalu turun (puncak)',lembah:'Turun lalu naik (lembah)'}[o]}</button>`).join('');
+ document.querySelectorAll('#exps button').forEach((b,i)=>b.setAttribute('aria-pressed',i===j));
+ sync();recalc();}
+$('#exps').innerHTML=EXPS.map((e,j)=>`<button aria-pressed="false">Eksperimen ${j+1}</button>`).join('');
+document.querySelectorAll('#exps button').forEach((b,j)=>b.onclick=()=>pickExp(j));
+$('#e-opt').onclick=e=>{const o=e.target.dataset.o;if(!o)return;const p=PAR.find(q=>q.k===EX.key);
+ const act=trendOf(v=>EX.met(calc({...S,[EX.key]:v})),p.min,p.max);
+ document.querySelectorAll('#e-opt button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.o===o));
+ $('#e-fb').textContent=o===act?`Prediksi tepat. Hasil perhitungan: ${EX.ml} berubah dengan pola "${act}" pada seluruh rentang.`:`Belum tepat. Hasil perhitungan menunjukkan pola "${act}". Buktikan dengan menggeser slider.`;};
+$('#e-reset').onclick=()=>pickExp(EXPS.indexOf(EX));
+function drawExp(){
+ if(!EX||$('#exp').hidden)return;
+ $('#e-obs').innerHTML=`<table><tr><th>X_L (Ω)</th><th>X_C (Ω)</th><th>|Z| (Ω)</th><th>Irms (A)</th><th>φ (°)</th><th>P (W)</th><th>Q (var)</th><th>PF</th></tr>
+ <tr><td>${f(K.XL)}</td><td>${f(K.XC)}</td><td>${f(K.Z)}</td><td>${f(K.I,3)}</td><td>${fs(K.phi*180/PI,1)}</td><td>${f(K.P)}</td><td>${fs(K.Q)}</td><td>${f(K.pf,3)}</td></tr></table>`;
+ $('#e-conc').textContent=EX.conc(K);
+ const{x,w,h}=cv('cv-sweep'),p=PAR.find(q=>q.k===EX.key),n=200,ys=[];
+ for(let j=0;j<=n;j++)ys.push(EX.met(calc({...S,[EX.key]:p.min+(p.max-p.min)*j/n})));
+ let lo=Math.min(...ys),hi=Math.max(...ys);if(hi-lo<1e-9){hi+=1;lo-=1;}
+ const ml=48,mb=24,X=v=>ml+(v-p.min)/(p.max-p.min)*(w-ml-10),Y=v=>h-mb-(v-lo)/(hi-lo)*(h-mb-14);
+ x.strokeStyle='#d3dce7';x.strokeRect(ml,8,w-ml-10,h-mb-8);
+ x.beginPath();ys.forEach((v,j)=>{const px=X(p.min+(p.max-p.min)*j/n);j?x.lineTo(px,Y(v)):x.moveTo(px,Y(v));});x.strokeStyle=css('--acc');x.lineWidth=2.5;x.stroke();
+ if(EX.key==='f'){const f0=K.f0;x.setLineDash([5,4]);x.strokeStyle=css('--q');x.lineWidth=1.5;x.beginPath();x.moveTo(X(f0),8);x.lineTo(X(f0),h-mb);x.stroke();x.setLineDash([]);txt(x,`f₀ = ${f(f0,1)} Hz`,X(f0)+4,22,css('--q'),'left','11px sans-serif');}
+ x.fillStyle=css('--i');x.beginPath();x.arc(X(S[EX.key]),Y(EX.met(K)),6,0,2*PI);x.fill();
+ txt(x,EX.ml,4,16,'#16263a','left','11px sans-serif');txt(x,f(hi,2),ml-4,18,'#5a6b80','right','11px sans-serif');txt(x,f(lo,2),ml-4,h-mb,'#5a6b80','right','11px sans-serif');
+ txt(x,`${f(p.min,0)}`,ml,h-8,'#5a6b80','left','11px sans-serif');txt(x,`${f(p.max,0)} ${p.u}`,w-10,h-8,'#5a6b80','right','11px sans-serif');
+}
+
+/* ---------- Evaluasi ---------- */
+const QZ=[
+{q:'Pada beban induktif murni (RL) hubungan fase yang benar adalah…',o:['Arus mendahului tegangan','Arus tertinggal dari tegangan','Arus sefase dengan tegangan','Arus dan tegangan berbeda 180°'],a:1,e:'Induktor melawan perubahan arus (v = L·di/dt), sehingga arus tertinggal; Q positif.'},
+{q:'Beban menyerap P = 800 W dan Q = 600 var (induktif). Berapa S dan faktor dayanya?',o:['1400 VA; 0,57','1000 VA; 0,8','1000 VA; 0,6','700 VA; 0,8'],a:1,e:'S = √(800² + 600²) = 1000 VA; PF = P/S = 0,8 lagging.'},
+{q:'Berapa daya aktif rata-rata satu siklus pada induktor ideal?',o:['Sama dengan S','Sama dengan Q','Nol','Sama dengan P rangkaian'],a:2,e:'Induktor ideal bergantian menyimpan dan mengembalikan energi; ⟨p_L⟩ = 0.'},
+{q:'Pada resonansi seri RLC ideal, pernyataan yang benar adalah…',o:['|Z| = R, φ = 0°, PF = 1','|Z| maksimum dan arus minimum','X_L = 0 dan X_C = 0','Q sumber maksimum'],a:0,e:'Saat X_L = X_C, reaktansi saling meniadakan: Z = R, arus maksimum, φ = 0°, Q sumber ≈ 0.'},
+{q:'Manakah pernyataan yang tepat mengenai kekekalan daya pada rangkaian AC ideal?',o:['S sumber = jumlah aljabar S tiap komponen','P dan Q sumber sama dengan jumlah P dan Q komponen, sedangkan S² = P² + Q²','Daya reaktif hilang menjadi panas di L dan C','Kekekalan daya hanya berlaku untuk rata-rata, bukan sesaat'],a:1,e:'Daya sesaat kekal setiap saat; daya kompleks P + jQ kekal, tetapi besar S tidak dijumlahkan aljabar.'}];
+$('#quiz').innerHTML=QZ.map((z,j)=>`<div class="q"><b>${j+1}. ${z.q}</b>${z.o.map((o,k)=>`<label><input type="radio" name="q${j}" value="${k}"> ${o}</label>`).join('')}<div class="fb" id="fb${j}"></div></div>`).join('');
+$('#qcheck').onclick=()=>{let s=0;QZ.forEach((z,j)=>{const c=document.querySelector(`input[name=q${j}]:checked`),ok=c&&+c.value===z.a;if(ok)s++;$('#fb'+j).innerHTML=(c?(ok?'<span style="color:#0b6b40">Benar. </span>':'<span style="color:#9b1c1c">Kurang tepat. </span>'):'<span style="color:#9b1c1c">Belum dijawab. </span>')+z.e;});
+ $('#qscore').textContent=`Skor: ${s} dari ${QZ.length}`;};
+$('#qreset').onclick=()=>{document.querySelectorAll('#quiz input').forEach(i=>i.checked=false);document.querySelectorAll('.fb').forEach(e=>e.textContent='');$('#qscore').textContent='';};
+
+/* ---------- Loop utama ---------- */
+const vis=id=>!$('#'+id).hidden;
+let last=0;
+function loop(ts){
+ const dt=Math.min(.05,(ts-last)/1000||0);last=ts;
+ if(playing)ph=(ph+2*PI*.4*speed*dt)%(2*PI*60);
+ if(vis('sim')){drawCircuit();live();}
+ if(vis('graph')){drawWave();drawPhasor();drawTri();}
+ if(vis('exp'))drawExp();
+ requestAnimationFrame(loop);
+}
+pickExp(0);S={model:'RLC',...DEF};sync();recalc();requestAnimationFrame(loop);
+</script>
+</body>
+</html>
